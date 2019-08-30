@@ -1,0 +1,12 @@
+h1{
+    font-size: 50px;
+    font-family: Georgia, Times, 'Times New Roman', serif;
+}
+
+p{
+    font-style: italic;
+}
+
+span{
+    color: red;
+}
