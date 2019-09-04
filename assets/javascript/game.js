@@ -7,10 +7,13 @@ let numberOfGuesses = 9 // May want to update this later to be variable difficut
 let guessesMade = []; // Record the guesses in this variable
 let userLetter; //Store user input
 
-let myLetter = letterBank[Math.floor(Math.random() * letterBank.length)]; // The letter to match
+let myLetter = letterBank[Math.floor(Math.random() * letterBank.length)] // Initialize myLetter
 
-// Grab user input
-// guessesMade = document.getElementById('guessTracker')
+let spanWinCounter = document.getElementById('winCounter')
+let spanLossCounter = document.getElementById('loseCounter')
+let spanGuessCounter = document.getElementById('guessCounter')
+let spanGuessTracker = document.getElementById('guessTracker')
+let status = document.getElementById('gameStatus')
 
 // Testing only. Comment out before submitting
 // document.getElementById('letterGenerated').innerHTML = `<span>${myLetter}</span>`;
@@ -23,20 +26,16 @@ initializeGame()
 // Record user input
 document.onkeyup = function(event){
     console.log(event)
-    //if valid keyboard press
+    //if valid keyboard press run the game
     if (event.keyCode >= 65 && event.keyCode <= 90){
-
         //Process user keyboard input
         processUserInput(event.key)
-
-        // display the user's input onto the webpage
-        
-
-        compareLetters(event.key)
     }
     // if keyboard press is invalid
     else
     console.log('Invalid input')
+
+    pageUpdate()
 }
 
 function initializeGame(){
@@ -44,10 +43,10 @@ function initializeGame(){
     numberOfGuesses = 9; // May want to update this later to be variable difficutly
     guessesMade.length = 0; // Record the guesses in this variable
 
-    document.getElementById('winCounter').innerHTML = `<span>${numberOfWins}</span>`
-    document.getElementById('loseCounter').innerHTML = `<span>${numberOfLoses}</span>`
-    document.getElementById('guessCounter').innerHTML = `<span>${numberOfGuesses}</span>`
-    document.getElementById('guessTracker').innerHTML = `<span>${guessesMade}</span>`
+    spanWinCounter.innerHTML = numberOfWins
+    spanLossCounter.innerHTML = numberOfLoses
+    spanGuessCounter.innerHTML = numberOfGuesses
+    spanGuessTracker.innerHTML = guessesMade
     
     // generate a new letter
     myLetter = letterBank[Math.floor(Math.random() * letterBank.length)];
@@ -56,44 +55,69 @@ function initializeGame(){
 
 function processUserInput(x){
     console.log("running processUserInput")
-    
-    //add the parsed user input to the array guesses made
-    guessesMade.push(x)
 
-    // decrease the number of guesses
-    numberOfGuesses--
+    if(numberOfGuesses !== 0){   
+        console.log(`user input is ${x}`)
 
-    // display the decrement of numberOfGuesses
-    document.getElementById('guessCounter').innerHTML = `<span>${numberOfGuesses}</span>`
-
-    // display the user's input onto the webpage
-    document.getElementById('guessTracker').innerHTML = `<span>${guessesMade}</span>`
-    console.log(`user input is ${x}`)
+        //compare user input to the letter
+        compareLetters(event.key)
+    }
+    else{
+        status.innerHTML = `You've run out of guesses! Generating a new letter!`
+        initializeGame()
+    }
 }
 
 function compareLetters(x){
     console.log(`running compareLetters. Input letter is ${x}`)
     console.log(`computer letter is ${myLetter}`)
-    if(x === myLetter){
-        console.log("letters are equal")
-        // increase number of wins by 1
-        numberOfWins++
-
-        // display on the webpage
-        document.getElementById('winCounter').innerHTML = `<span>${numberOfWins}</span>`
-
-        // Reinitialize the game
-        initializeGame()
-        document.getElementById('gameStatus').innerHTML = `<span>Correct!</span>`
+    
+    //Let currentLetter be a boolean to compare if the letter was already used.
+    if (guessesMade.includes(x)){
+        console.log(`you have already used letter ${x}`)
     }
     else{
-        console.log(`Letters are not equal`)
-        document.getElementById('gameStatus').innerHTML = `<span>Guess Again!</span>`
+        //add the parsed user input to the array guesses made
+        guessesMade.push(x)
 
-        // increment numberOfLoses
-        numberOfLoses++
+        // Check if letter is correct
+        if(x === myLetter){
+            // decrease the number of guesses
+            numberOfGuesses--
+            console.log("letters are equal")
+            status.innerHTML = `Correct!`
 
-        // display the increment of numberOfLoses
-        document.getElementById('loseCounter').innerHTML = `<span>${numberOfLoses}</span>`
+            // increase number of wins by 1
+            numberOfWins++
+            
+            // Reinitialize the game
+            initializeGame()
+        }
+        else{ // if letter is wrong
+            // decrease the number of guesses
+            numberOfGuesses--
+
+            console.log(`Letters are not equal`)
+            status.innerHTML = `Guess Again!`
+
+            // increment numberOfLoses
+            numberOfLoses++
+
+            
+        }
     }
 }
+
+function pageUpdate() {
+    // display the decrement of numberOfGuesses
+    spanGuessCounter.innerHTML = numberOfGuesses
+
+    // display the user's input onto the webpage
+    spanGuessTracker.innerHTML = guessesMade
+
+    // display on the webpage
+    spanWinCounter.innerHTML = numberOfWins
+
+    // display the increment of numberOfLoses
+    spanLossCounter.innerHTML = numberOfLoses
+}   
